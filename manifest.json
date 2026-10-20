@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-20T06:45:33.154Z",
+  "generatedAt": "2026-10-20T06:58:04.442Z",
   "host": "XTJY-20250303XH",
   "platform": "Windows_NT 10.0.19045 x64",
   "dshVersion": "0.2.1-rc.2",
@@ -12,7 +12,7 @@
     "enabledBundles": 28,
     "shippedBundles": 2
   },
-  "totalInstalledSizeMB": 413.1,
+  "totalInstalledSizeMB": 413.2,
   "bundleOrder": [
     "@deepseek-ai/dsh-base",
     "@deepseek-ai/dsh-web-app",
@@ -405,7 +405,7 @@
       "description": "GitHub 仓库双向同步、Actions 触发与监控、CI 状态展示、推送前本地检查与 DSH 自动化流水线",
       "repository": "git+https://github.com/wzw4429-crypto/dsh-github-sync.git",
       "homepage": "https://github.com/wzw4429-crypto/dsh-github-sync#readme",
-      "installedSizeMB": 0.1,
+      "installedSizeMB": 0.2,
       "present": true
     },
     {
@@ -524,6 +524,7 @@
     "manifest.json",
     "README.md",
     "restore.ps1",
+    "patches/dsh-github-sync-1.0.0-tool-contract.patch",
     "profile/package.json",
     "profile/pnpm-workspace.yaml",
     "profile/pnpm-lock.yaml",

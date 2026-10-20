@@ -1,0 +1,12 @@
+[
+  {
+    "package": "dsh-github-sync",
+    "version": "1.0.0",
+    "file": "dsh-github-sync-1.0.0-tool-contract.patch",
+    "upstream": "https://github.com/wzw4429-crypto/dsh-github-sync",
+    "commit": "9112dc975a83a5cc101555eb3c93c0825ff30dfb",
+    "title": "ToolDefinition 契约适配 + ctx.effect 误用修复",
+    "detail": "6 个 github_* 工具在当前 DSH 下注册失败：output 需写成 { schema, render }；ctx.effect(fn) 是立即执行 setup，因此 ctx.effect(() => dispose()) 会在挂载瞬间注销工具（同一处 stop() 亦然）。",
+    "needsReapply": "重新安装该插件后必须重新应用"
+  }
+]

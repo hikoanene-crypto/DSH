@@ -1,0 +1,105 @@
+# dsh-github-sync 1.0.0 —— 与当前 DSH (0.2.1-rc.2) 的 ToolDefinition 契约兼容性修复
+#
+# 背景：上游 wzw4429-crypto/dsh-github-sync 只有 commit 9112dc975a83a5cc101555eb3c93c0825ff30dfb 一个版本，
+#       它按旧版 @deepseek-ai/dsh-tools 的契约注册工具，在当前 DSH 下 6 个 github_* 工具全部注册失败。
+#
+# 两处不兼容：
+#   1) ToolDefinition.output 的旧写法是「裸 JSON Schema + 顶层 render」，新契约要求
+#        output: { schema, render, presentationMeta? }
+#      旧写法直接抛 TypeError: tool "<name>" must declare output { schema, render, presentationMeta? }
+#   2) ctx.effect(fn) 的语义是「立即执行 fn，把 fn 的返回值当 disposer」。
+#      旧写法 ctx.effect(() => dispose()) 会在挂载瞬间就调用 dispose()，工具刚注册就被注销，
+#      且不抛出任何错误 —— 表现为行 active、日志无异常、但 Tool.listTools 里没有 github_* 工具。
+#
+# 应用方式（在插件目录内）：git apply --unidiff-zero 不需要；直接
+#     git apply <此文件>
+# 或在插件目录外使用： git apply --directory=node_modules/dsh-github-sync <此文件>
+#
+# 重新安装插件后需要重新应用（node_modules 会被覆盖）。
+
+diff --git a/index.js b/index.js
+index 23ab9f7..6ae3bb0 100644
+--- a/index.js
++++ b/index.js
+@@ -81,7 +81,7 @@ export function apply(ctx, config) {
+   } catch {}
+   try {
+     const stop = ctx.on('agent/created', ({ agent }) => { if (agent) agents.add(agent); });
+-    if (typeof stop === 'function') ctx.effect(() => stop());
++    if (typeof stop === 'function') ctx.effect(() => stop);
+   } catch {}
+   const notify = (text) => {
+     if (!cfg.notifyAgent) return;
+@@ -471,7 +471,7 @@ export function apply(ctx, config) {
+   for (const definition of buildTools(services)) {
+     try {
+       const dispose = ctx.tools.register(definition);
+-      if (typeof dispose === 'function') ctx.effect(() => dispose());
++      if (typeof dispose === 'function') ctx.effect(() => dispose);
+     } catch (err) {
+       log(`tool register failed (${definition.name}): ${String((err && err.message) || err)}`);
+     }
+diff --git a/lib/tools.js b/lib/tools.js
+index 7d2a0f7..8be2182 100644
+--- a/lib/tools.js
++++ b/lib/tools.js
+@@ -44,8 +44,7 @@ export function buildTools(services) {
+           repo: { type: 'string', description: 'Repository name from plugin config; omit for all repos.' },
+         },
+       },
+-      output: RESULT_SCHEMA,
+-      render: textRender,
++      output: { schema: RESULT_SCHEMA, render: textRender },
+       async execute(args, exec) {
+         exec?.signal?.throwIfAborted?.();
+         const action = args?.action === 'pipeline' ? 'pipeline' : 'sync';
+@@ -63,8 +62,7 @@ export function buildTools(services) {
+           repo: { type: 'string', description: 'Repository name; omit for all repos.' },
+         },
+       },
+-      output: RESULT_SCHEMA,
+-      render: textRender,
++      output: { schema: RESULT_SCHEMA, render: textRender },
+       async execute(args, exec) {
+         exec?.signal?.throwIfAborted?.();
+         const report = await services.statusReport(args?.repo ? String(args.repo) : undefined);
+@@ -86,8 +84,7 @@ export function buildTools(services) {
+         },
+         required: ['repo'],
+       },
+-      output: RESULT_SCHEMA,
+-      render: textRender,
++      output: { schema: RESULT_SCHEMA, render: textRender },
+       async execute(args, exec) {
+         exec?.signal?.throwIfAborted?.();
+         if (args?.action === 'run-detail') {
+@@ -118,8 +115,7 @@ export function buildTools(services) {
+         },
+         required: ['repo', 'action'],
+       },
+-      output: RESULT_SCHEMA,
+-      render: textRender,
++      output: { schema: RESULT_SCHEMA, render: textRender },
+       async execute(args, exec) {
+         exec?.signal?.throwIfAborted?.();
+         const repo = String(args.repo);
+@@ -150,8 +146,7 @@ export function buildTools(services) {
+           refresh: { type: 'boolean', description: 'For list: force refresh of the cached inventory.' },
+         },
+       },
+-      output: RESULT_SCHEMA,
+-      render: textRender,
++      output: { schema: RESULT_SCHEMA, render: textRender },
+       async execute(args, exec) {
+         exec?.signal?.throwIfAborted?.();
+         const action = ['add', 'remove', 'rename'].includes(args?.action) ? args.action : 'list';
+@@ -189,8 +184,7 @@ export function buildTools(services) {
+         },
+         required: ['repo'],
+       },
+-      output: RESULT_SCHEMA,
+-      render: textRender,
++      output: { schema: RESULT_SCHEMA, render: textRender },
+       async execute(args, exec) {
+         exec?.signal?.throwIfAborted?.();
+         const p = args?.path ? String(args.path) : '';

@@ -62,6 +62,32 @@ Add-Plugin 'github:wzw4429-crypto/dsh-github-sync#9112dc975a83a5cc101555eb3c93c0
 Add-Plugin '@goodandready/dsh-model-sync@0.5.15'  # package.json 里的 spec: 0.5.15
 Add-Plugin '@dpskk2/dsh-chatsync@0.20.0'  # package.json 里的 spec: 0.20.0
 
+# 应用兼容性补丁：插件包内与当前 DSH API 契约不兼容的地方，重装后必须重打
+$patchIndex = Join-Path (Join-Path $here 'patches') 'index.json'
+if (Test-Path $patchIndex) {
+  $items = @(Get-Content $patchIndex -Raw | ConvertFrom-Json)
+  $hasGit = $null -ne (Get-Command git -ErrorAction SilentlyContinue)
+  $script:patchSkipped = @()
+  foreach ($it in $items) {
+    $tgt = Join-Path (Join-Path $profileDir 'node_modules') $it.package
+    $pf = Join-Path (Join-Path $here 'patches') $it.file
+    if (-not (Test-Path $tgt)) { $script:patchSkipped += $it.file; continue }
+    if (-not $hasGit) { $script:patchSkipped += $it.file; continue }
+    Push-Location $tgt
+    & git apply --check $pf 2>$null
+    if ($LASTEXITCODE -ne 0) { Pop-Location; $script:patchSkipped += $it.file; continue }
+    & git apply $pf
+    $rc = $LASTEXITCODE
+    Pop-Location
+    if ($rc -eq 0) { Write-Host "==> 已应用补丁 $($it.file)" -ForegroundColor Cyan }
+    else { $script:patchSkipped += $it.file }
+  }
+  if ($script:patchSkipped.Count -gt 0) {
+    Write-Warning ("以下补丁没应用（缺 git / 包没装上 / 已被上游修复）：" + ($script:patchSkipped -join ', '))
+    Write-Host "  相关插件可能缺少部分 agent 工具，手工处理见 README 的「已打兼容性补丁」一节。" -ForegroundColor Yellow
+  }
+}
+
 # 配置层最后覆盖：主题 / 模型 / 各插件的 config
 $patchSrc = Join-Path $here 'profile\cordis.patch.yml'
 if (Test-Path $patchSrc) {
