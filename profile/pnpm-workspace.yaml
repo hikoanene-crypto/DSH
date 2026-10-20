@@ -1,0 +1,43 @@
+packages:
+  - .
+
+nodeLinker: hoisted
+autoInstallPeers: false
+minimumReleaseAgeExclude:
+  - billion-context@0.1.202
+  - '@vectorize-io/hindsight-coding-agents@0.8.2'
+  - '@michengai/dsh-skills-manager@1.2.8'
+  - dsh-wechat@0.12.0
+  - '@michengai/dsh-agency-agents@1.2.8'
+  - dsh-continual-evolve@0.19.2
+  - dsh-ops@0.3.2
+  - '@linxin666/dsh-client-ui-skill-explorer@0.4.8'
+  - '@linxin666/dsh-pet@0.4.8'
+  - '@michengai/dsh-archive-manager@1.1.6'
+  - '@linxin666/dsh-client-ui-community-plugins@0.4.8'
+  - '@linxin666/dsh-client-ui-git-graph@0.4.8'
+  - '@linxin666/dsh-client-ui-market@0.4.8'
+  - '@linxin666/dsh-client-ui-plugin-manager@0.4.8'
+  - '@linxin666/dsh-client-ui-preset-center@0.4.8'
+  - '@linxin666/dsh-client-ui-skin-center@0.4.8'
+  - '@linxin666/dsh-client-ui-task-board-github@0.4.8'
+  - '@linxin666/dsh-client-ui-task-board@0.4.8'
+  - '@linxin666/dsh-client-ui-web-ui-settings@0.4.8'
+  - '@linxin666/dsh-i18n@0.4.8'
+  - '@linxin666/dsh-liangshen@0.4.8'
+  - '@linxin666/dsh-remote-bridge@0.4.8'
+  - '@linxin666/dsh-remote-web-ui@0.4.8'
+  - '@linxin666/dsh-session-archive@0.4.8'
+  - '@linxin666/dsh-ssh@0.4.8'
+  - '@linxin666/dsh-update@0.4.8'
+  - '@linxin666/dsh-usage@0.4.8'
+  - '@linxin666/dsh-web-all@0.4.8'
+  - '@linxin666/dsh-win-bash@0.4.8'
+  - dsh-mnemon@0.5.33
+  - dsh-free-search@0.9.7
+  - dsh-image-gen@0.9.2
+  - '@furongjun1999/dsh-memory@0.9.7'
+allowBuilds:
+  cloudflared: true
+  cpu-features: true
+  ssh2: true
