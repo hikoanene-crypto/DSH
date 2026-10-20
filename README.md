@@ -3,7 +3,7 @@
 把本机 **DeepSeek Harness** 的 `desktop` profile 上安装的全部插件做成一份可还原的快照。
 本仓库**不含任何密钥、token 或账号凭据**，可以公开。
 
-- 生成时间：2026/10/20 14:35:03（Asia/Shanghai）
+- 生成时间：2026/10/20 14:45:33（Asia/Shanghai）
 - 主机：XTJY-20250303XH · Windows_NT 10.0.19045 x64
 - DSH 版本：0.2.1-rc.2 · Node v24.21.0
 - 已安装依赖（插件包）：**26** 个，合计约 **413.1 MB**
@@ -76,5 +76,8 @@ profile/cordis.yml         profile 根（空数组，由各 layer 组合）
 ## 注意
 
 - 两个插件是从 GitHub 提交装的，不是 npm 版本：见清单里来源为 GitHub 的条目，还原时需能访问 GitHub。
+- `restore.ps1` 走的是 `dsh plugin add`，如果某个包因为网络/权限没装上，脚本会提示你改走锁文件：
+  把 `profile/` 里的 `package.json`、`pnpm-lock.yaml`、`pnpm-workspace.yaml` 拷进 profile 目录跑 `pnpm install`，
+  这条路连 integrity 哈希都固定了，是最精确的还原方式。
 - `cordis.patch.yml` 里的图片生成插件只存了 baseURL 与模型名，**没有**存 API Key；Key 需要你重新填。
 - 配置层有 1 行引用了本机没装的包（`pet -> @linxin666/dsh-pet`），那一行本来就是失效状态，还原后也一样。
